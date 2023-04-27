@@ -1,0 +1,194 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Node {
+    int data;
+    struct Node* next;
+};
+
+void insert_at_beginning(struct Node** head_ref, int new_data) {
+    struct Node* new_node = (struct Node*) malloc(sizeof(struct Node));
+    new_node->data = new_data;
+    new_node->next = *head_ref;
+    *head_ref = new_node;
+}
+
+void insert_at_end(struct Node** head_ref, int new_data) {
+    struct Node* new_node = (struct Node*) malloc(sizeof(struct Node));
+    struct Node* last = *head_ref;
+    new_node->data = new_data;
+    new_node->next = NULL;
+    if (*head_ref == NULL) {
+        *head_ref = new_node;
+        return;
+    }
+    while (last->next != NULL) {
+        last = last->next;
+    }
+    last->next = new_node;
+}
+
+void insert_after_element(struct Node** head_ref, int new_data, int prev_data) {
+    struct Node* new_node = (struct Node*) malloc(sizeof(struct Node));
+    struct Node* current = *head_ref;
+    while (current != NULL && current->data != prev_data) {
+        current = current->next;
+    }
+    if (current == NULL) {
+        printf("Element not found in the list.\n");
+        return;
+    }
+    new_node->data = new_data;
+    new_node->next = current->next;
+    current->next = new_node;
+}
+
+void insert_at_position(struct Node** head_ref, int new_data, int position) {
+    struct Node* new_node = (struct Node*) malloc(sizeof(struct Node));
+    struct Node* current = *head_ref;
+    int i;
+    for (i = 1; i < position-1 && current != NULL; i++) {
+        current = current->next;
+    }
+    if (current == NULL && position != 1) {
+        printf("Position out of range.\n");
+        return;
+    }
+    new_node->data = new_data;
+    if (position == 1) {
+        new_node->next = *head_ref;
+        *head_ref = new_node;
+        return;
+    }
+    new_node->next = current->next;
+    current->next = new_node;
+}
+
+void delete_at_end(struct Node** head_ref) {
+    struct Node* current = *head_ref;
+    struct Node* prev = NULL;
+    if (current == NULL) {
+        printf("List is empty.\n");
+        return;
+    }
+    if (current->next == NULL) {
+        *head_ref = NULL;
+        free(current);
+        return;
+    }
+    while (current->next != NULL) {
+        prev = current;
+        current = current->next;
+    }
+    prev->next = NULL;
+    free(current);
+}
+
+void delete_at_beginning(struct Node** head_ref) {
+    struct Node* current = *head_ref;
+    if (current == NULL) {
+        printf("List is empty.\n");
+        return;
+    }
+    *head_ref = current->next;
+    free(current);
+}
+
+void delete_at_position(struct Node** head_ref, int position) {
+    struct Node* current = *head_ref;
+    struct Node* prev = NULL;
+    int i;
+    for (i = 1; i < position && current != NULL; i++) {
+        prev = current;
+        current = current->next;
+    }
+    if (current == NULL) {
+       
+printf("Position out of range.\n");
+    return;
+}
+if (position == 1) {
+    *head_ref = current->next;
+    free(current);
+    return;
+}
+prev->next = current->next;
+free(current);
+}
+
+void traverse(struct Node* node) {
+if (node == NULL) {
+printf("List is empty.\n");
+return;
+}
+printf("List contents: ");
+while (node != NULL) {
+printf("%d ", node->data);
+node = node->next;
+}
+printf("\n");
+}
+
+int main() {
+struct Node* head = NULL;
+int choice, data, prev_data, position;
+while (1) {
+printf("\nOperations available:\n");
+printf("1. Insert at beginning\n");
+printf("2. Insert at end\n");
+printf("3. Insert after element\n");
+printf("4. Insert at position\n");
+printf("5. Delete at end\n");
+printf("6. Delete at beginning\n");
+printf("7. Delete at position\n");
+printf("8. Traverse\n");
+printf("9. Exit\n");
+printf("Enter your choice: ");
+scanf("%d", &choice);
+switch (choice) {
+case 1:
+printf("Enter data to insert: ");
+scanf("%d", &data);
+insert_at_beginning(&head, data);
+break;
+case 2:
+printf("Enter data to insert: ");
+scanf("%d", &data);
+insert_at_end(&head, data);
+break;
+case 3:
+printf("Enter data to insert: ");
+scanf("%d", &data);
+printf("Enter element to insert after: ");
+scanf("%d", &prev_data);
+insert_after_element(&head, data, prev_data);
+break;
+case 4:
+printf("Enter data to insert: ");
+scanf("%d", &data);
+printf("Enter position to insert at: ");
+scanf("%d", &position);
+insert_at_position(&head, data, position);
+break;
+case 5:
+delete_at_end(&head);
+break;
+case 6:
+delete_at_beginning(&head);
+break;
+case 7:
+printf("Enter position to delete: ");
+scanf("%d", &position);
+delete_at_position(&head, position);
+break;
+case 8:
+traverse(head);
+break;
+case 9:
+exit(0);
+default:
+printf("Invalid choice.\n");
+}
+}
+return 0;
+}
