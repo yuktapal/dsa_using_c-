@@ -1,0 +1,111 @@
+#include<stdio.h>
+#include<stdlib.h>
+
+// Structure for a polynomial term
+struct term {
+    int coeff;
+    int exp;
+    struct term *next;
+};
+
+// Function to create a new term
+struct term *create_term(int coeff, int exp) {
+    struct term *new_term = (struct term*) malloc(sizeof(struct term));
+    new_term->coeff = coeff;
+    new_term->exp = exp;
+    new_term->next = NULL;
+    return new_term;
+}
+
+// Function to insert a term in the polynomial
+void insert_term(struct term **head, int coeff, int exp) {
+    struct term *new_term = create_term(coeff, exp);
+    if (*head == NULL) {
+        *head = new_term;
+    } else {
+        struct term *prev = NULL, *curr = *head;
+        while (curr != NULL && curr->exp > exp) {
+            prev = curr;
+            curr = curr->next;
+        }
+        if (curr != NULL && curr->exp == exp) {
+            curr->coeff += coeff;
+            free(new_term);
+        } else {
+            if (prev == NULL) {
+                new_term->next = *head;
+                *head = new_term;
+            } else {
+                prev->next = new_term;
+                new_term->next = curr;
+            }
+        }
+    }
+}
+
+// Function to add two polynomials
+struct term *add_polynomials(struct term *p1, struct term *p2) {
+    struct term *result = NULL;
+    while (p1 != NULL && p2 != NULL) {
+        if (p1->exp > p2->exp) {
+            insert_term(&result, p1->coeff, p1->exp);
+            p1 = p1->next;
+        } else if (p1->exp < p2->exp) {
+            insert_term(&result, p2->coeff, p2->exp);
+            p2 = p2->next;
+        } else {
+            int coeff_sum = p1->coeff + p2->coeff;
+            insert_term(&result, coeff_sum, p1->exp);
+            p1 = p1->next;
+            p2 = p2->next;
+        }
+    }
+    while (p1 != NULL) {
+        insert_term(&result, p1->coeff, p1->exp);
+        p1 = p1->next;
+    }
+    while (p2 != NULL) {
+        insert_term(&result, p2->coeff, p2->exp);
+        p2 = p2->next;
+    }
+    return result;
+}
+
+// Function to print a polynomial
+void print_polynomial(struct term *head) {
+    if (head == NULL) {
+        printf("0\n");
+        return;
+    }
+    while (head != NULL) {
+        if (head->coeff != 0) {
+            if (head->coeff > 0) {
+                printf("+");
+            }
+            printf("%dx^%d", head->coeff, head->exp);
+        }
+        head = head->next;
+    }
+    printf("\n");
+}
+
+int main() {
+    // Creating and adding terms to polynomial 1
+    struct term *p1 = NULL;
+    insert_term(&p1, 2, 3);
+    insert_term(&p1, 5, 2);
+    insert_term(&p1, 4, 0);
+    printf("Polynomial 1: ");
+    print_polynomial(p1);
+    // Creating and adding terms to polynomial 2
+    struct term *p2 = NULL;
+    insert_term(&p2, 3, 4);
+insert_term(&p2, -1, 2);
+printf("Polynomial 2: ");
+print_polynomial(p2);
+// Adding the polynomials
+struct term *result = add_polynomials(p1, p2);
+printf("Result: ");
+print_polynomial(result);
+return 0;
+}
