@@ -1,0 +1,67 @@
+#include<stdio.h>
+#include<stdlib.h>
+typedef struct  Node{
+    int data;
+    struct Node* next;
+    
+}node;
+node* top=NULL;
+int isEmpty(){
+    if(top==NULL){
+        return 1;
+    }
+    else{
+        return 0;
+    }
+}
+void push(int element){
+    node *newnode=(node*)malloc(sizeof(node));
+    if(newnode==NULL){
+        printf("Memory allocation failed");
+        return;
+        
+    }
+    newnode->data=element;
+    newnode->next=top;
+    top=newnode;
+    printf("Pushed element %d\n",element);
+    
+}
+int pop(){
+    int element;
+    node *temp;
+    if(isEmpty()){
+        printf("Stack is empty");
+        return -1;
+    }
+    else{
+        temp=top;
+        element=temp->data;
+        top=temp->next;
+        free(temp);
+        return element;
+    }
+}
+void display(){
+    node * temp;
+    if(isEmpty()){
+        printf("Stack is empty");
+    }
+    else{
+        printf("Stack element \n");
+        temp=top;
+        while(temp!=NULL){
+            printf("%d\n",temp->data);
+            temp=temp->next;
+        }
+    }
+}
+int main(){
+    push(10);
+    push(20);
+    push(30);
+    display();
+    printf("Poped element %d\n",pop());
+    display();
+    return 0;
+}
